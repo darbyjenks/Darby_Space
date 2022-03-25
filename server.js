@@ -1,35 +1,16 @@
-const express = require ('express');
-const mongodb = require('mongodb').MongoClient;
+const express = require('express');
+const db = require('./config/connection');
+const routes = require('./routes');
+
+const PORT = 3001;
 const app = express();
-const port = 3001;
 
-// mongoose.connect('mongodb://localhost:27017/socialMediaDB', {
-//     // useNewUrlParcer: true,
-//     useUnifiedTopology: true
-// })
-const connectionStringURI = `mongodb://localhost:27017/socialMediaDB`
-mongodb.connect(
-    connectionStringURI,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    (err, client) => {
-      db = client.db();
-      // Drops any documents, if they exist
-      db.collection('socialMedia').deleteMany({});
-      // Adds data to database
-    //   db.collection('socialMedia').insertMany(data, (err, res) => {
-    //     if (err) {
-    //       return console.log(err);
-    //     }
-    //     console.log(res.ops);
-    //   });
-  
-      app.listen(port, () => {
-        console.log(`Example app listening at http://localhost:${port}`);
-      });
-    }
-  );
-app.listen(port, () => {
-    console.log(`Port listening.. ${port}`);
-    // mongoose.connection.once("open", () => console.log('Mongoose connected'))
-})
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(routes);
 
+db.once('open', () => {
+  app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+  });
+});

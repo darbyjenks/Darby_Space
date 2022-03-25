@@ -17,17 +17,12 @@ const reactionSchema = new Schema({
     userName: {
         type: String,
         required: true,
-    },
-    reactions: [
-        reactionSchema
-    ]
-
-},{
+    }},
+    {
     toJSON: {
         virtuals: true,
     },
     id: false
 })
 
-const Reaction = model('Reaction', reactionSchema);
-module.exports = Reaction;
+module.exports = reactionSchema
