@@ -1,4 +1,5 @@
 const {User, Thought} = require('../models');
+// const User = require('../models/User');
 
 module.exports = {
     getUsers(req,res){
@@ -8,7 +9,7 @@ module.exports = {
     },
 //single user
     getSingleUser(req,res){
-        User.findOne({ _id: req.params.commentId })
+        User.findOne({ _id: req.params.userId })
         .then((userData) =>
         !userData
           ? res.status(404).json({ message: 'No user found with that id' })
@@ -20,14 +21,14 @@ module.exports = {
 createUser(req, res) {
     User.create(req.body)
       .then((userData) => {
-        return Post.findOneAndUpdate(
-          { _id: req.body.postId },
+        return User.findOneAndUpdate(
+          { _id: req.body.userId },
           { $push: { users: userData._id } },
           { new: true }
         );
       })
-      .then((post) =>
-        !post
+      .then((user) =>
+        !user
           ? res
               .status(404)
               .json({ message: 'user created, but no users with this ID' })
@@ -37,10 +38,8 @@ createUser(req, res) {
         console.error(err);
       });
   },
+  //update
+  //delete
+  //add friend
+  //remove friend
 };
-//update
-//delete
-//add friend
-//remove friend
-
-// module.exports = userController
