@@ -1,5 +1,6 @@
 const { Thought, User } = require('../models');
 
+
 module.exports = {
   getThoughts(req, res) {
     Thought.find()
@@ -11,26 +12,27 @@ module.exports = {
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: 'No thought with that ID' })
-          : res.json(post)
+          : res.json(thought)
       )
       .catch((err) => res.status(500).json(err));
   },
   // create a new post
   createThought(req, res) {
     Thought.create(req.body)
-      .then((thought) => {
-        return User.findOneAndUpdate(
-          { _id: req.body.userId },
-          { $addToSet: { thoughts: thought._id } },
-          { new: true }
-        );
-      })
-      .then((user) =>
-        !user
-          ? res
-              .status(404)
-              .json({ message: 'Post created, but found no user with that ID' })
-          : res.json('Created the post 🎉')
+      .then((thoughtData) => res.json(thoughtData))
+      .catch((err) => res.status(500).json(err));
+  },
+  //Update Thought
+  updateThought(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((thought) =>
+        !thought
+          ? res.status(404).json({ message: 'No thought with this id!' })
+          : res.json(thought)
       )
       .catch((err) => {
         console.log(err);
@@ -38,21 +40,21 @@ module.exports = {
       });
   },
   // Add a reaction
-  addReaction(req, res) {
+  addThoughtReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $addToSet: { responses: req.body } },
       { runValidators: true, new: true }
     )
-      .then((video) =>
-        !video
+      .then((thought) =>
+        !thought
           ? res.status(404).json({ message: 'No video with this id!' })
           : res.json(thought)
       )
       .catch((err) => res.status(500).json(err));
   },
   // Remove video response
-  deleteReaction(req, res) {
+  deleteThoughtReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $pull: { reactions: { reactionId: req.params.reactionId } } },
@@ -60,7 +62,7 @@ module.exports = {
     )
       .then((thought) =>
         !thought
-          ? res.status(404).json({ message: 'No video with this id!' })
+          ? res.status(404).json({ message: 'No thought with this id!' })
           : res.json(thought)
       )
       .catch((err) => res.status(500).json(err));
