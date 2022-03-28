@@ -64,7 +64,7 @@ module.exports = {
   addThoughtReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $addToSet: { responses: req.body } },
+      { $addToSet: { reactions: req.body } },
       { runValidators: true, new: true }
     )
       .then((thought) =>
@@ -74,7 +74,7 @@ module.exports = {
       )
       .catch((err) => res.status(500).json(err));
   },
-  // Remove video response
+  // Remove reaction
   deleteThoughtReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
