@@ -30,7 +30,7 @@ createUser(req, res) {
         !user
           ? res.status(404).json({ message: 'No user with this id!' })
           : User.findOneAndUpdate(
-              { videos: req.params.userId },
+              { users: req.params.userId },
               { $pull: { users: req.params.userId } },
               { new: true }
             )
@@ -67,7 +67,7 @@ createUser(req, res) {
     console.log(req.body);
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $addToSet: { friends: req.body } },
+      { $addToSet: { friends: req.params.friendId } },
       { runValidators: true, new: true }
     )
       .then((user) =>
@@ -83,7 +83,7 @@ createUser(req, res) {
   removeFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $pull: { friend: { friendId: req.params.friendId } } },
+      { $pull: { friend: { friends: req.params.friendId } } },
       { runValidators: true, new: true }
     )
       .then((user) =>
@@ -91,7 +91,7 @@ createUser(req, res) {
           ? res
               .status(404)
               .json({ message: 'No user found with that ID' })
-          : res.json(student)
+          : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
   },
